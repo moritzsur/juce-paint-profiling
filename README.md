@@ -1,9 +1,9 @@
-This repo contains code to measure a components paint() performance and store the result as .csv for later analysis.
-Because of memory alignment and branch prediction stuff, 
-this will not 100% align with real world performance.
+A quick way to measure a components paint() performance and store the result as .csv for later analysis.
+Because of memory alignment and branch prediction stuff, I wouldnt use it to compare bufferedToImage true/false for components.
+
+By default it stores the csv files in userDocsDir/JuceComponentRepaintData
 
 How to use:
-
 ```cpp
 	//default settings
     juce::Component testComp;

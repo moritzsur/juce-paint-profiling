@@ -121,9 +121,10 @@ void JuceComponentRepaintProfiler::storeResultsAsCSV(juce::StringPairArray& test
 {
 	using Str = juce::String;
 
-	if (csvFile == juce::File())
+	auto fileName = juce::File::createLegalFileName(cComp->getName() + "Results");
+	if (csvFile == juce::File() ||csvFile.getFileNameWithoutExtension() != fileName)
 	{
-		csvFile = resultFolder.getNonexistentChildFile(juce::File::createLegalFileName(cComp->getName() + "Results"), ".csv");
+		csvFile = resultFolder.getNonexistentChildFile(fileName, ".csv");
 		jassert(!csvFile.exists());
 		csvFile.create();
 		
