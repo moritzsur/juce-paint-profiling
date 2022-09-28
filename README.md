@@ -10,7 +10,7 @@ How to use:
     juce::Component testComp;
     testComp.setName("TestComp");
     JuceComponentRepaintProfiler tester;
-    tester.testComponent(&testComp);
+    tester.measureRepaints(&testComp);
 
 ```
 
@@ -30,7 +30,7 @@ How to use:
 
     juce::Component testComp;
     testComp.setName("TestComp");
-    tester.testComponent(&testComp);
+    tester.measureRepaints(&testComp);
 ```
 
 warning: to test the same component twice with different settings, rename it.
@@ -43,11 +43,11 @@ Otherwise the new results will be added to the existing csv file.
     TestComp testComp;
 
     testComp.setName("TestComp");
-    tester.testComponent(&testComp);
+    tester.measureRepaints(&testComp);
 
     testComp.setOpaque(true);
     testComp.setName("TestComp Opaque")
-    tester.testComponent(&testComp);
+    tester.measureRepaints(&testComp);
 ```
 
 TODO:
