@@ -9,7 +9,7 @@ JuceComponentRepaintProfiler::JuceComponentRepaintProfiler(juce::File newResultF
 		resultFolder.createDirectory();
 }
 
-void JuceComponentRepaintProfiler::testComponent(juce::Component* componentToTest)
+void JuceComponentRepaintProfiler::measureRepaints(juce::Component* componentToTest)
 {
 	jassert(componentToTest != nullptr);
 	jassert(componentToTest->getName() != ""); //you need to set your components name so a file can be created
@@ -106,8 +106,8 @@ void JuceComponentRepaintProfiler::processResults(std::vector<double> results)
 	juce::StringPairArray testData;
 	testData.set("NumRuns", Str(numRuns));
 	testData.set("PaintInterval", Str(getLastPaintInterval()));
-	testData.set("Width", Str(getLastWidth()));
-	testData.set("Height", Str(getLastHeight()));
+	testData.set("Width", Str(cComp->getWidth()));
+	testData.set("Height", Str(cComp->getHeight()));
 	testData.set("IsBuffered", Str(getLastBuffered() ? "true" : "false"));
 	testData.set("MinMS", Str(min));
 	testData.set("MaxMS", Str(max));
@@ -121,23 +121,7 @@ void JuceComponentRepaintProfiler::storeResultsAsCSV(juce::StringPairArray& test
 {
 	using Str = juce::String;
 
-	auto fileName = juce::File::createLegalFileName(cComp->getName() + "Results");
-	if (csvFile == juce::File() ||csvFile.getFileNameWithoutExtension() != fileName)
-	{
-		csvFile = resultFolder.getNonexistentChildFile(fileName, ".csv");
-		jassert(!csvFile.exists());
-		csvFile.create();
-		
-		auto topLine = Str();
-		for (auto& key : testData.getAllKeys())
-		{
-			jassert(!key.containsAnyOf(",;"));
-			topLine = topLine + key + ",";
-		}
-		topLine = topLine.dropLastCharacters(1) + "\n";
-
-		csvFile.appendText(topLine, true, true);
-	}
+	prepareCsvFile(testData);
 
 	auto csvStr = csvFile.loadFileAsString();
 	const auto firstLine = csvStr.upToFirstOccurrenceOf("\r\n", false, true);
@@ -161,4 +145,27 @@ void JuceComponentRepaintProfiler::storeResultsAsCSV(juce::StringPairArray& test
 	}
 	strToAppend = strToAppend.dropLastCharacters(1) + "\n";
 	csvFile.appendText(strToAppend, true);
+}
+
+void JuceComponentRepaintProfiler::prepareCsvFile(juce::StringPairArray& testData)
+{
+	auto fileName = juce::File::createLegalFileName(cComp->getName() + "Results");
+	if (csvFile.getFileNameWithoutExtension() == fileName)
+		return;
+
+	csvFile = resultFolder.getChildFile(fileName + ".csv");
+	if (csvFile.exists())
+		return;
+
+	csvFile.create();
+
+	auto topLine = juce::String();
+	for (auto& key : testData.getAllKeys())
+	{
+		jassert(!key.containsAnyOf(",;"));
+		topLine = topLine + key + ",";
+	}
+	topLine = topLine.dropLastCharacters(1) + "\n";
+
+	csvFile.appendText(topLine, true, true);
 }

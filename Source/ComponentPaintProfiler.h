@@ -15,7 +15,7 @@ public:
 	* note:
 	* - Im afraid this isnt extremely accurate since the component image will probably stay in higher cache levels than in a real project
 	*/
-	void testComponent(juce::Component* componentToTest);
+	void measureRepaints(juce::Component* componentToTest);
 
 	//change these for testing
 	int maxWidth = 1000;
@@ -26,8 +26,6 @@ public:
 	std::vector<int> repaintIntervalsToTest{ 0, 1, 32, 64 }; 
 
 protected:
-	int  getLastWidth()			{ return width; }
-	int  getLastHeight()		{ return height; }
 	bool getLastBuffered()		{ return isBuffered; }
 	int  getLastPaintInterval() { return repaintInterval; }
 
@@ -36,6 +34,7 @@ protected:
 private:
 	virtual void processResults(std::vector<double> results);
 	
+	void prepareCsvFile(juce::StringPairArray& testData);
 	juce::Image setCompSize(const int width, const int height);
 	double getMsSinceTick(const juce::uint64& startTicks);
 	std::vector<double> getResults(juce::Graphics& g);
