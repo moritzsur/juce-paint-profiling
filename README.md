@@ -49,3 +49,6 @@ Otherwise the new results will be added to the existing csv file.
     testComp.setName("TestComp Opaque")
     tester.testComponent(&testComp);
 ```
+
+TODO:
+- measure component tree structures paint performance
